@@ -853,24 +853,292 @@
 // export default App;
 
 
+// import React, { useState } from "react";
+
+// const App = () => {
+//   // Main inputs
+//   const [total, setTotal] = useState("");
+//   const [absent, setAbsent] = useState("");
+//   const [days, setDays] = useState("");
+
+//   // Predictor inputs
+//   const [futureTotalDays, setFutureTotalDays] = useState("");
+//   const [futureAbsentDays, setFutureAbsentDays] = useState("");
+
+//   // Hidden feature
+//   const [attendDays, setAttendDays] = useState("");
+//   const [showAttendFeature, setShowAttendFeature] = useState(false);
+
+//   const [result, setResult] = useState(null);
+
+//   const [showPopup, setShowPopup] = useState(
+//     !localStorage.getItem("seenPopup")
+//   );
+
+//   const handleStart = () => {
+//     localStorage.setItem("seenPopup", "true");
+//     setShowPopup(false);
+//   };
+
+//   const calculate = () => {
+//     const t = Number(total);
+//     const a = Number(absent);
+//     const d = Number(days);
+
+//     if (t === 0) return;
+
+//     const futureAbsents = d * 8;
+
+//     const newTotal = t + futureAbsents;
+//     const newAbsent = a + futureAbsents;
+
+//     const attendance = ((newTotal - newAbsent) / newTotal) * 100;
+
+//     // 🎯 Safe bunk
+//     let safeBunk = 0;
+//     while (
+//       ((newTotal - (newAbsent + safeBunk)) /
+//         (newTotal + safeBunk)) *
+//         100 >=
+//       75
+//     ) {
+//       safeBunk++;
+//     }
+//     safeBunk--;
+
+//     // 📉 Recovery
+//     let recovery = 0;
+//     if (attendance < 75) {
+//       while (
+//         ((newTotal + recovery - newAbsent) /
+//           (newTotal + recovery)) *
+//           100 <
+//         75
+//       ) {
+//         recovery++;
+//       }
+//     }
+
+//     // 🔮 Prediction
+//     const N = Number(futureTotalDays);
+//     const A = Number(futureAbsentDays);
+
+//     let predictedAttendance = null;
+
+//     if (N > 0 && A <= N) {
+//       const totalAfter = t + N * 8;
+//       const absentAfter = a + A * 8;
+
+//       predictedAttendance =
+//         ((totalAfter - absentAfter) / totalAfter) * 100;
+//     }
+
+//     // 🆕 Hidden feature calculation
+//     const attendN = Number(attendDays);
+//     let attendPrediction = null;
+
+//     if (attendN > 0) {
+//       const totalAfter = t + attendN * 8;
+//       const absentAfter = a;
+
+//       attendPrediction =
+//         ((totalAfter - absentAfter) / totalAfter) * 100;
+//     }
+
+//     setResult({
+//       attendance: attendance.toFixed(2),
+//       safeBunk,
+//       recovery,
+//       predictedAttendance:
+//         predictedAttendance !== null
+//           ? predictedAttendance.toFixed(2)
+//           : null,
+//       attendPrediction:
+//         attendPrediction !== null
+//           ? attendPrediction.toFixed(2)
+//           : null,
+//     });
+//   };
+
+//   const getColor = (att) => {
+//     if (att >= 75) return "text-green-400";
+//     if (att >= 60) return "text-yellow-400";
+//     return "text-red-400";
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4 text-white">
+
+//       {/* POPUP */}
+//       {showPopup && (
+//         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+//           <div className="bg-[#0f172a] max-w-md w-full p-6 rounded-2xl border border-white/10">
+//             <h2 className="text-xl text-center text-purple-400 mb-3">
+//               Welcome 👋
+//             </h2>
+
+//             <ul className="text-sm text-gray-400 space-y-2 mb-5">
+//               <li>• Enter total & absent lectures</li>
+//               <li>• 1 day = 8 lectures</li>
+//               <li>• Plan your attendance smartly</li>
+//             </ul>
+
+//             <button
+//               onClick={handleStart}
+//               className="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded"
+//             >
+//               OK, Continue
+//             </button>
+//           </div>
+//         </div>
+//       )}
+
+//       {/* MAIN */}
+//       <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/10">
+
+//         <h1 className="text-2xl text-center mb-4 font-semibold">
+//           Attendance Tracker
+//         </h1>
+
+//         {/* Inputs */}
+//         <div className="space-y-3">
+//           <input
+//             type="number"
+//             placeholder="Total Lectures"
+//             className="w-full p-3 bg-white/10 rounded"
+//             value={total}
+//             onChange={(e) => setTotal(e.target.value)}
+//           />
+//           <input
+//             type="number"
+//             placeholder="Absent Lectures"
+//             className="w-full p-3 bg-white/10 rounded"
+//             value={absent}
+//             onChange={(e) => setAbsent(e.target.value)}
+//           />
+//           <input
+//             type="number"
+//             placeholder="Future Absent Days"
+//             className="w-full p-3 bg-white/10 rounded"
+//             value={days}
+//             onChange={(e) => setDays(e.target.value)}
+//           />
+//         </div>
+
+//         {/* Predictor */}
+//         <div className="mt-4 p-4 bg-black/40 rounded">
+//           <h2 className="text-purple-400 mb-2">
+//             Future Absence Predictor
+//           </h2>
+//           <input
+//             type="number"
+//             placeholder="Next Total Days"
+//             className="w-full p-2 mb-2 bg-white/10 rounded"
+//             value={futureTotalDays}
+//             onChange={(e) => setFutureTotalDays(e.target.value)}
+//           />
+//           <input
+//             type="number"
+//             placeholder="Absent Days"
+//             className="w-full p-2 bg-white/10 rounded"
+//             value={futureAbsentDays}
+//             onChange={(e) => setFutureAbsentDays(e.target.value)}
+//           />
+//         </div>
+
+//         {/* 🔥 Toggle Button */}
+//         <button
+//           onClick={() => setShowAttendFeature(!showAttendFeature)}
+//           className="w-full mt-4 py-2 bg-white/10 rounded hover:bg-white/20 transition"
+//         >
+//           {showAttendFeature ? "Hide Extra Feature" : "Show Extra Feature"}
+//         </button>
+
+//         {/* Hidden Section */}
+//         {showAttendFeature && (
+//           <div className="mt-4 p-4 bg-black/40 rounded">
+//             <h2 className="text-blue-400 mb-2">
+//               Attendance if You Attend All
+//             </h2>
+//             <input
+//               type="number"
+//               placeholder="Next Days (no absence)"
+//               className="w-full p-2 bg-white/10 rounded"
+//               value={attendDays}
+//               onChange={(e) => setAttendDays(e.target.value)}
+//             />
+//           </div>
+//         )}
+
+//         <button
+//           onClick={calculate}
+//           className="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded"
+//         >
+//           Calculate
+//         </button>
+
+//         {/* Results */}
+//         {result && (
+//           <div className="mt-6 text-center">
+
+//             <p className={getColor(result.attendance)}>
+//               Attendance: {result.attendance}%
+//             </p>
+
+//             <p className="mt-2">
+//               Safe bunk: {result.safeBunk}
+//             </p>
+
+//             {result.recovery > 0 && (
+//               <p className="text-red-400">
+//                 Attend next {result.recovery} lectures
+//               </p>
+//             )}
+
+//             {result.predictedAttendance && (
+//               <div className="mt-4 bg-black/50 p-3 rounded">
+//                 <p>After planned absence:</p>
+//                 <p className="text-purple-400 text-xl">
+//                   {result.predictedAttendance}%
+//                 </p>
+//               </div>
+//             )}
+
+//             {showAttendFeature && result.attendPrediction && (
+//               <div className="mt-4 bg-black/50 p-3 rounded">
+//                 <p>If you attend all classes:</p>
+//                 <p className="text-blue-400 text-xl">
+//                   {result.attendPrediction}%
+//                 </p>
+//               </div>
+//             )}
+
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default App;
+
 import React, { useState } from "react";
 
 const App = () => {
-  // Main inputs
+  // Inputs
   const [total, setTotal] = useState("");
   const [absent, setAbsent] = useState("");
   const [days, setDays] = useState("");
 
-  // Predictor inputs
   const [futureTotalDays, setFutureTotalDays] = useState("");
   const [futureAbsentDays, setFutureAbsentDays] = useState("");
 
-  // Hidden feature
   const [attendDays, setAttendDays] = useState("");
   const [showAttendFeature, setShowAttendFeature] = useState(false);
 
   const [result, setResult] = useState(null);
 
+  // Popup
   const [showPopup, setShowPopup] = useState(
     !localStorage.getItem("seenPopup")
   );
@@ -894,55 +1162,46 @@ const App = () => {
 
     const attendance = ((newTotal - newAbsent) / newTotal) * 100;
 
-    // 🎯 Safe bunk
+    // Safe bunk
     let safeBunk = 0;
     while (
       ((newTotal - (newAbsent + safeBunk)) /
         (newTotal + safeBunk)) *
-        100 >=
-      75
+        100 >= 75
     ) {
       safeBunk++;
     }
     safeBunk--;
 
-    // 📉 Recovery
+    // Recovery
     let recovery = 0;
     if (attendance < 75) {
       while (
         ((newTotal + recovery - newAbsent) /
           (newTotal + recovery)) *
-          100 <
-        75
+          100 < 75
       ) {
         recovery++;
       }
     }
 
-    // 🔮 Prediction
+    // Prediction
+    let predictedAttendance = null;
     const N = Number(futureTotalDays);
     const A = Number(futureAbsentDays);
 
-    let predictedAttendance = null;
-
     if (N > 0 && A <= N) {
-      const totalAfter = t + N * 8;
-      const absentAfter = a + A * 8;
-
       predictedAttendance =
-        ((totalAfter - absentAfter) / totalAfter) * 100;
+        ((t + N * 8 - (a + A * 8)) / (t + N * 8)) * 100;
     }
 
-    // 🆕 Hidden feature calculation
-    const attendN = Number(attendDays);
+    // Attend all
     let attendPrediction = null;
+    const attendN = Number(attendDays);
 
     if (attendN > 0) {
-      const totalAfter = t + attendN * 8;
-      const absentAfter = a;
-
       attendPrediction =
-        ((totalAfter - absentAfter) / totalAfter) * 100;
+        ((t + attendN * 8 - a) / (t + attendN * 8)) * 100;
     }
 
     setResult({
@@ -950,13 +1209,9 @@ const App = () => {
       safeBunk,
       recovery,
       predictedAttendance:
-        predictedAttendance !== null
-          ? predictedAttendance.toFixed(2)
-          : null,
+        predictedAttendance?.toFixed(2),
       attendPrediction:
-        attendPrediction !== null
-          ? attendPrediction.toFixed(2)
-          : null,
+        attendPrediction?.toFixed(2),
     });
   };
 
@@ -967,12 +1222,16 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4 text-white">
+    <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4 text-white relative">
 
-      {/* POPUP */}
+      {/* 🔥 Background Grid */}
+      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(#fff_1px,transparent_1px),linear-gradient(to_right,#fff_1px,transparent_1px)] bg-[size:40px_40px]" />
+
+      {/* 🔥 Popup */}
       {showPopup && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
-          <div className="bg-[#0f172a] max-w-md w-full p-6 rounded-2xl border border-white/10">
+          <div className="bg-[#0f172a] p-6 rounded-2xl max-w-md w-full border border-white/10 shadow-xl">
+
             <h2 className="text-xl text-center text-purple-400 mb-3">
               Welcome 👋
             </h2>
@@ -980,7 +1239,8 @@ const App = () => {
             <ul className="text-sm text-gray-400 space-y-2 mb-5">
               <li>• Enter total & absent lectures</li>
               <li>• 1 day = 8 lectures</li>
-              <li>• Plan your attendance smartly</li>
+              <li>• Use predictors smartly</li>
+              <li>• Maintain ≥ 75% attendance</li>
             </ul>
 
             <button
@@ -993,8 +1253,8 @@ const App = () => {
         </div>
       )}
 
-      {/* MAIN */}
-      <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/10">
+      {/* Main Card */}
+      <div className="relative w-full max-w-md bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10 shadow-xl">
 
         <h1 className="text-2xl text-center mb-4 font-semibold">
           Attendance Tracker
@@ -1046,15 +1306,15 @@ const App = () => {
           />
         </div>
 
-        {/* 🔥 Toggle Button */}
+        {/* Toggle */}
         <button
           onClick={() => setShowAttendFeature(!showAttendFeature)}
-          className="w-full mt-4 py-2 bg-white/10 rounded hover:bg-white/20 transition"
+          className="w-full mt-4 py-2 bg-white/10 rounded"
         >
           {showAttendFeature ? "Hide Extra Feature" : "Show Extra Feature"}
         </button>
 
-        {/* Hidden Section */}
+        {/* Hidden Feature */}
         {showAttendFeature && (
           <div className="mt-4 p-4 bg-black/40 rounded">
             <h2 className="text-blue-400 mb-2">
@@ -1062,7 +1322,7 @@ const App = () => {
             </h2>
             <input
               type="number"
-              placeholder="Next Days (no absence)"
+              placeholder="Next Days"
               className="w-full p-2 bg-white/10 rounded"
               value={attendDays}
               onChange={(e) => setAttendDays(e.target.value)}
@@ -1070,6 +1330,7 @@ const App = () => {
           </div>
         )}
 
+        {/* Button */}
         <button
           onClick={calculate}
           className="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded"
