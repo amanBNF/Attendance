@@ -1,69 +1,489 @@
-import React, { useState, useEffect, useRef } from "react";
-import { gsap } from "gsap";
+// import React, { useState } from "react";
+
+// const App = () => {
+//   const [total, setTotal] = useState("");
+//   const [absent, setAbsent] = useState("");
+//   const [days, setDays] = useState("");
+//   const [result, setResult] = useState(null);
+
+//   const calculate = () => {
+//     const t = Number(total);
+//     const a = Number(absent);
+//     const d = Number(days);
+
+//     const futureAbsents = d * 8;
+
+//     const newTotal = t + futureAbsents;
+//     const newAbsent = a + futureAbsents;
+
+//     const attendance = ((newTotal - newAbsent) / newTotal) * 100;
+
+//     // 🎯 Safe bunk calculation
+//     let safeBunk = 0;
+//     while (
+//       ((newTotal - (newAbsent + safeBunk)) /
+//         (newTotal + safeBunk)) *
+//         100 >=
+//       75
+//     ) {
+//       safeBunk++;
+//     }
+//     safeBunk--;
+
+//     // 📉 Recovery calculation
+//     let recovery = 0;
+//     if (attendance < 75) {
+//       while (
+//         ((newTotal + recovery - newAbsent) /
+//           (newTotal + recovery)) *
+//           100 <
+//         75
+//       ) {
+//         recovery++;
+//       }
+//     }
+
+//     setResult({
+//       newTotal,
+//       newAbsent,
+//       attendance: attendance.toFixed(2),
+//       safeBunk,
+//       recovery,
+//     });
+//   };
+
+//   // 🎨 color based on attendance
+//   const getColor = (att) => {
+//     if (att >= 75) return "text-green-400";
+//     if (att >= 60) return "text-yellow-400";
+//     return "text-red-400";
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4 text-white">
+//       <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl backdrop-blur-lg border border-white/10 shadow-xl">
+
+//         <h1 className="text-2xl text-center font-semibold mb-4">
+//           Attendance Tracker
+//         </h1>
+
+//         {/* Inputs */}
+//         <div className="space-y-3">
+//           <input
+//             type="number"
+//             placeholder="Total Lectures"
+//             className="w-full p-3 rounded bg-white/10 border border-white/10"
+//             value={total}
+//             onChange={(e) => setTotal(e.target.value)}
+//           />
+
+//           <input
+//             type="number"
+//             placeholder="Absent Lectures"
+//             className="w-full p-3 rounded bg-white/10 border border-white/10"
+//             value={absent}
+//             onChange={(e) => setAbsent(e.target.value)}
+//           />
+
+//           <input
+//             type="number"
+//             placeholder="Future Absent Days"
+//             className="w-full p-3 rounded bg-white/10 border border-white/10"
+//             value={days}
+//             onChange={(e) => setDays(e.target.value)}
+//           />
+//         </div>
+
+//         {/* Button */}
+//         <button
+//           onClick={calculate}
+//           className="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:scale-105 transition"
+//         >
+//           Calculate
+//         </button>
+
+//         {/* Result */}
+//         {result && (
+//           <div className="mt-6 text-center">
+
+//             {/* 🔵 Circular Progress */}
+//             <div className="relative w-32 h-32 mx-auto mb-4">
+//               <div className="absolute inset-0 rounded-full border-8 border-gray-700"></div>
+//               <div
+//                 className="absolute inset-0 rounded-full border-8 border-blue-500"
+//                 style={{
+//                   clipPath: `inset(${100 - result.attendance}% 0 0 0)`
+//                 }}
+//               ></div>
+//               <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
+//                 {result.attendance}%
+//               </div>
+//             </div>
+
+//             <p>Total: {result.newTotal}</p>
+//             <p>Absent: {result.newAbsent}</p>
+
+//             <p className={`mt-2 text-lg font-bold ${getColor(result.attendance)}`}>
+//               Attendance: {result.attendance}%
+//             </p>
+
+//             {/* 🎯 Safe bunk */}
+//             <p className="mt-3">
+//               You can bunk <span className="font-bold">{result.safeBunk}</span> more lectures safely
+//             </p>
+
+//             {/* 📉 Recovery */}
+//             {result.recovery > 0 && (
+//               <p className="mt-2 text-red-400">
+//                 Attend next <span className="font-bold">{result.recovery}</span> lectures to reach 75%
+//               </p>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default App;
+
+
+// import React, { useState } from "react";
+
+// const App = () => {
+//   const [total, setTotal] = useState("");
+//   const [absent, setAbsent] = useState("");
+//   const [days, setDays] = useState("");
+
+//   // 🔮 New feature states
+//   const [futureTotalDays, setFutureTotalDays] = useState("");
+//   const [futureAbsentDays, setFutureAbsentDays] = useState("");
+
+//   const [result, setResult] = useState(null);
+
+//   const calculate = () => {
+//     const t = Number(total);
+//     const a = Number(absent);
+//     const d = Number(days);
+
+//     const futureAbsents = d * 8;
+
+//     const newTotal = t + futureAbsents;
+//     const newAbsent = a + futureAbsents;
+
+//     const attendance = ((newTotal - newAbsent) / newTotal) * 100;
+
+//     // 🎯 Safe bunk
+//     let safeBunk = 0;
+//     while (
+//       ((newTotal - (newAbsent + safeBunk)) /
+//         (newTotal + safeBunk)) *
+//         100 >=
+//       75
+//     ) {
+//       safeBunk++;
+//     }
+//     safeBunk--;
+
+//     // 📉 Recovery
+//     let recovery = 0;
+//     if (attendance < 75) {
+//       while (
+//         ((newTotal + recovery - newAbsent) /
+//           (newTotal + recovery)) *
+//           100 <
+//         75
+//       ) {
+//         recovery++;
+//       }
+//     }
+
+//     // 🔮 Prediction feature
+//     const N = Number(futureTotalDays);
+//     const A = Number(futureAbsentDays);
+
+//     let predictedAttendance = null;
+
+//     if (N > 0 && A <= N) {
+//       const futureLectures = N * 8;
+//       const futureAbsentLectures = A * 8;
+
+//       const totalAfter = t + futureLectures;
+//       const absentAfter = a + futureAbsentLectures;
+
+//       predictedAttendance =
+//         ((totalAfter - absentAfter) / totalAfter) * 100;
+//     }
+
+//     setResult({
+//       newTotal,
+//       newAbsent,
+//       attendance: attendance.toFixed(2),
+//       safeBunk,
+//       recovery,
+//       predictedAttendance:
+//         predictedAttendance !== null
+//           ? predictedAttendance.toFixed(2)
+//           : null,
+//     });
+//   };
+
+//   const getColor = (att) => {
+//     if (att >= 75) return "text-green-400";
+//     if (att >= 60) return "text-yellow-400";
+//     return "text-red-400";
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4 text-white">
+//       <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl backdrop-blur-lg border border-white/10 shadow-xl">
+
+//         <h1 className="text-2xl text-center font-semibold mb-4">
+//           Attendance Tracker
+//         </h1>
+
+//         {/* Inputs */}
+//         <div className="space-y-3">
+//           <input
+//             type="number"
+//             placeholder="Total Lectures"
+//             className="w-full p-3 rounded bg-white/10 border border-white/10"
+//             value={total}
+//             onChange={(e) => setTotal(e.target.value)}
+//           />
+
+//           <input
+//             type="number"
+//             placeholder="Absent Lectures"
+//             className="w-full p-3 rounded bg-white/10 border border-white/10"
+//             value={absent}
+//             onChange={(e) => setAbsent(e.target.value)}
+//           />
+
+//           <input
+//             type="number"
+//             placeholder="Future Absent Days (simple)"
+//             className="w-full p-3 rounded bg-white/10 border border-white/10"
+//             value={days}
+//             onChange={(e) => setDays(e.target.value)}
+//           />
+//         </div>
+
+//         {/* 🔮 Prediction Section (NEW DIV) */}
+//         <div className="mt-5 p-4 rounded-xl bg-black/40 border border-white/10">
+//           <h2 className="text-lg font-semibold mb-2 text-purple-400">
+//             Future Attendance Predictor
+//           </h2>
+
+//           <div className="space-y-2">
+//             <input
+//               type="number"
+//               placeholder="Next Total Days"
+//               className="w-full p-2 rounded bg-white/10 border border-white/10"
+//               value={futureTotalDays}
+//               onChange={(e) => setFutureTotalDays(e.target.value)}
+//             />
+
+//             <input
+//               type="number"
+//               placeholder="Days You Will Be Absent"
+//               className="w-full p-2 rounded bg-white/10 border border-white/10"
+//               value={futureAbsentDays}
+//               onChange={(e) => setFutureAbsentDays(e.target.value)}
+//             />
+//           </div>
+//         </div>
+
+//         {/* Button */}
+//         <button
+//           onClick={calculate}
+//           className="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:scale-105 transition"
+//         >
+//           Calculate
+//         </button>
+
+//         {/* Results */}
+//         {result && (
+//           <div className="mt-6 text-center">
+
+//             <p>Total: {result.newTotal}</p>
+//             <p>Absent: {result.newAbsent}</p>
+
+//             <p className={`mt-2 text-lg font-bold ${getColor(result.attendance)}`}>
+//               Attendance: {result.attendance}%
+//             </p>
+
+//             {/* 🎯 Safe bunk */}
+//             <p className="mt-3">
+//               You can bunk <span className="font-bold">{result.safeBunk}</span> more lectures safely
+//             </p>
+
+//             {/* 📉 Recovery */}
+//             {result.recovery > 0 && (
+//               <p className="mt-2 text-red-400">
+//                 Attend next <span className="font-bold">{result.recovery}</span> lectures to reach 75%
+//               </p>
+//             )}
+
+//             {/* 🔮 Prediction Result */}
+//             {result.predictedAttendance && (
+//               <div className="mt-4 p-4 rounded-xl bg-black/50 border border-purple-500/30">
+//                 <p className="text-gray-300">
+//                   After {futureTotalDays} days (absent {futureAbsentDays} days):
+//                 </p>
+//                 <p className="text-2xl font-bold text-purple-400">
+//                   {result.predictedAttendance}%
+//                 </p>
+//               </div>
+//             )}
+
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default App;
+
+
+import React, { useState } from "react";
 
 const App = () => {
+  // Main inputs
   const [total, setTotal] = useState("");
   const [absent, setAbsent] = useState("");
   const [days, setDays] = useState("");
+
+  // Prediction inputs
+  const [futureTotalDays, setFutureTotalDays] = useState("");
+  const [futureAbsentDays, setFutureAbsentDays] = useState("");
+
   const [result, setResult] = useState(null);
 
-  const cardRef = useRef();
-  const resultRef = useRef();
+  // Popup state (with memory)
+  const [showPopup, setShowPopup] = useState(
+    !localStorage.getItem("seenPopup")
+  );
 
-  useEffect(() => {
-    gsap.fromTo(
-      cardRef.current,
-      { y: 60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
-    );
-  }, []);
+  const handleStart = () => {
+    localStorage.setItem("seenPopup", "true");
+    setShowPopup(false);
+  };
 
   const calculate = () => {
-    const totalLectures = Number(total);
-    const absentLectures = Number(absent);
-    const futureDays = Number(days);
+    const t = Number(total);
+    const a = Number(absent);
+    const d = Number(days);
 
-    const futureAbsents = futureDays * 8;
+    if (t === 0) return;
 
-    const newTotal = totalLectures + futureAbsents;
-    const newAbsent = absentLectures + futureAbsents;
+    const futureAbsents = d * 8;
 
-    const attendance =
-      ((newTotal - newAbsent) / newTotal) * 100;
+    const newTotal = t + futureAbsents;
+    const newAbsent = a + futureAbsents;
+
+    const attendance = ((newTotal - newAbsent) / newTotal) * 100;
+
+    // 🎯 Safe bunk
+    let safeBunk = 0;
+    while (
+      ((newTotal - (newAbsent + safeBunk)) /
+        (newTotal + safeBunk)) *
+        100 >=
+      75
+    ) {
+      safeBunk++;
+    }
+    safeBunk--;
+
+    // 📉 Recovery
+    let recovery = 0;
+    if (attendance < 75) {
+      while (
+        ((newTotal + recovery - newAbsent) /
+          (newTotal + recovery)) *
+          100 <
+        75
+      ) {
+        recovery++;
+      }
+    }
+
+    // 🔮 Prediction
+    const N = Number(futureTotalDays);
+    const A = Number(futureAbsentDays);
+
+    let predictedAttendance = null;
+
+    if (N > 0 && A <= N) {
+      const futureLectures = N * 8;
+      const futureAbsentLectures = A * 8;
+
+      const totalAfter = t + futureLectures;
+      const absentAfter = a + futureAbsentLectures;
+
+      predictedAttendance =
+        ((totalAfter - absentAfter) / totalAfter) * 100;
+    }
 
     setResult({
       newTotal,
       newAbsent,
       attendance: attendance.toFixed(2),
+      safeBunk,
+      recovery,
+      predictedAttendance:
+        predictedAttendance !== null
+          ? predictedAttendance.toFixed(2)
+          : null,
     });
+  };
 
-    setTimeout(() => {
-      gsap.fromTo(
-        resultRef.current,
-        { scale: 0.7, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" }
-      );
-    }, 100);
+  const getColor = (att) => {
+    if (att >= 75) return "text-green-400";
+    if (att >= 60) return "text-yellow-400";
+    return "text-red-400";
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{
-        fontFamily: "Poppins, sans-serif",
-        background: "linear-gradient(135deg, #0f172a, #020617)",
-      }}
-    >
-      {/* Grid background */}
-      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(#fff_1px,transparent_1px),linear-gradient(to_right,#fff_1px,transparent_1px)] bg-[size:50px_50px]" />
+    <div className="min-h-screen bg-[#020617] flex items-center justify-center px-4 text-white">
 
-      {/* Card */}
-      <div
-        ref={cardRef}
-        className="relative w-full max-w-md p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl"
-      >
-        <h1 className="text-2xl font-semibold text-center text-white mb-4">
-          Attendance Calculator
+      {/* 🔥 POPUP */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+          <div className="bg-[#0f172a] max-w-md w-full p-6 rounded-2xl border border-white/10 shadow-xl">
+
+            <h2 className="text-xl font-semibold mb-3 text-center text-purple-400">
+              Welcome 👋
+            </h2>
+
+            <p className="text-sm text-gray-300 mb-3">
+              📌 Instructions:
+            </p>
+
+            <ul className="text-sm text-gray-400 space-y-2 mb-5">
+              <li>• Enter total and absent lectures</li>
+              <li>• 1 day = 8 lectures</li>
+              <li>• Use predictor for future planning</li>
+              <li>• Maintain at least 75% attendance</li>
+            </ul>
+
+            <button
+              onClick={handleStart}
+              className="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:scale-105 transition"
+            >
+              OK, Continue
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MAIN CARD */}
+      <div className="w-full max-w-md bg-white/5 p-6 rounded-2xl backdrop-blur-lg border border-white/10 shadow-xl">
+
+        <h1 className="text-2xl text-center font-semibold mb-4">
+          Attendance Tracker
         </h1>
 
         {/* Inputs */}
@@ -71,7 +491,7 @@ const App = () => {
           <input
             type="number"
             placeholder="Total Lectures"
-            className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full p-3 rounded bg-white/10 border border-white/10"
             value={total}
             onChange={(e) => setTotal(e.target.value)}
           />
@@ -79,54 +499,85 @@ const App = () => {
           <input
             type="number"
             placeholder="Absent Lectures"
-            className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full p-3 rounded bg-white/10 border border-white/10"
             value={absent}
             onChange={(e) => setAbsent(e.target.value)}
           />
 
           <input
             type="number"
-            placeholder="Future Absent Days"
-            className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Future Absent Days (simple)"
+            className="w-full p-3 rounded bg-white/10 border border-white/10"
             value={days}
             onChange={(e) => setDays(e.target.value)}
           />
         </div>
 
+        {/* 🔮 Predictor Section */}
+        <div className="mt-5 p-4 rounded-xl bg-black/40 border border-white/10">
+          <h2 className="text-lg font-semibold mb-2 text-purple-400">
+            Future Attendance Predictor
+          </h2>
+
+          <div className="space-y-2">
+            <input
+              type="number"
+              placeholder="Next Total Days"
+              className="w-full p-2 rounded bg-white/10 border border-white/10"
+              value={futureTotalDays}
+              onChange={(e) => setFutureTotalDays(e.target.value)}
+            />
+
+            <input
+              type="number"
+              placeholder="Days You Will Be Absent"
+              className="w-full p-2 rounded bg-white/10 border border-white/10"
+              value={futureAbsentDays}
+              onChange={(e) => setFutureAbsentDays(e.target.value)}
+            />
+          </div>
+        </div>
+
         {/* Button */}
         <button
           onClick={calculate}
-          className="w-full mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-105 transition-transform"
+          className="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:scale-105 transition"
         >
           Calculate
         </button>
 
-        {/* Result */}
+        {/* Results */}
         {result && (
-          <div
-            ref={resultRef}
-            className="mt-5 p-4 rounded-xl bg-black/40 border border-white/10 text-center"
-          >
-            <p className="text-gray-300">
-              Total Lectures:{" "}
-              <span className="text-white font-medium">
-                {result.newTotal}
-              </span>
-            </p>
-            <p className="text-gray-300">
-              Total Absents:{" "}
-              <span className="text-white font-medium">
-                {result.newAbsent}
-              </span>
+          <div className="mt-6 text-center">
+
+            <p>Total: {result.newTotal}</p>
+            <p>Absent: {result.newAbsent}</p>
+
+            <p className={`mt-2 text-lg font-bold ${getColor(result.attendance)}`}>
+              Attendance: {result.attendance}%
             </p>
 
-            {/* Number Font */}
-            <p
-              className="text-3xl mt-3 text-blue-400"
-              style={{ fontFamily: "Orbitron, sans-serif" }}
-            >
-              {result.attendance}%
+            <p className="mt-3">
+              You can bunk <span className="font-bold">{result.safeBunk}</span> more lectures safely
             </p>
+
+            {result.recovery > 0 && (
+              <p className="mt-2 text-red-400">
+                Attend next <span className="font-bold">{result.recovery}</span> lectures to reach 75%
+              </p>
+            )}
+
+            {result.predictedAttendance && (
+              <div className="mt-4 p-4 rounded-xl bg-black/50 border border-purple-500/30">
+                <p className="text-gray-300">
+                  After {futureTotalDays} days (absent {futureAbsentDays} days):
+                </p>
+                <p className="text-2xl font-bold text-purple-400">
+                  {result.predictedAttendance}%
+                </p>
+              </div>
+            )}
+
           </div>
         )}
       </div>
